@@ -1,23 +1,8 @@
 const multer = require("multer");
 const path = require("path");
-const fs = require("fs");
 
-// Ensure 'uploads/' folder exists
-const uploadPath = path.join(__dirname, "../uploads");
-if (!fs.existsSync(uploadPath)) {
-  fs.mkdirSync(uploadPath, { recursive: true });
-}
-
-// Storage configuration
-const storage = multer.diskStorage({
-  destination: (req, file, cb) => {
-    cb(null, uploadPath);
-  },
-  filename: (req, file, cb) => {
-    const uniqueName = Date.now() + "-" + file.originalname;
-    cb(null, uniqueName);
-  },
-});
+// Use memory storage instead of disk storage
+const storage = multer.memoryStorage();
 
 // File type validation: only allow PDFs
 const fileFilter = (req, file, cb) => {
