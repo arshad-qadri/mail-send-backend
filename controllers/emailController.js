@@ -22,7 +22,7 @@ const sendEmail = async (req, res) => {
   };
 
   const mailOptions = {
-    from: `"Aq Arshad" <${process.env.EMAIL}>`,
+    from: `"Arshad Qadri" <${process.env.EMAIL}>`,
     to,
     subject,
     text,
