@@ -1,3 +1,4 @@
+const fs = require("fs");
 const transporter = require("../config/mailConfig");
 const EmailLog = require("../models/emailModel");
 
@@ -9,6 +10,11 @@ const sendEmail = async (req, res) => {
     return res.status(400).json({ message: "Resume file is required" });
   }
 
+  // Optional: Validate it's a PDF file
+  if (resumeFile.mimetype !== "application/pdf") {
+    return res.status(400).json({ message: "Only PDF files are allowed" });
+  }
+
   const mailOptions = {
     from: `"Aq Arshad" <${process.env.EMAIL}>`,
     to,
@@ -18,7 +24,7 @@ const sendEmail = async (req, res) => {
     attachments: [
       {
         filename: resumeFile.originalname,
-        path: resumeFile.path,
+        content: fs.createReadStream(resumeFile.path), // ✅ Stream avoids corruption
         contentType: "application/pdf",
       },
     ],
@@ -33,6 +39,7 @@ const sendEmail = async (req, res) => {
 
     res.status(200).json({ message: "Email with resume sent successfully" });
   } catch (error) {
+    console.error("Error sending email:", error);
     res.status(500).json({ message: "Failed to send or log email", error });
   }
 };
