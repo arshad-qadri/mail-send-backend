@@ -10,10 +10,16 @@ const sendEmail = async (req, res) => {
     return res.status(400).json({ message: "Resume file is required" });
   }
 
-  // Optional: Validate it's a PDF file
   if (resumeFile.mimetype !== "application/pdf") {
     return res.status(400).json({ message: "Only PDF files are allowed" });
   }
+
+  // Determine file content source
+  const attachment = {
+    filename: resumeFile.originalname,
+    content: resumeFile.buffer || fs.createReadStream(resumeFile.path),
+    contentType: "application/pdf",
+  };
 
   const mailOptions = {
     from: `"Aq Arshad" <${process.env.EMAIL}>`,
@@ -21,19 +27,12 @@ const sendEmail = async (req, res) => {
     subject,
     text,
     html: `<p>${text}</p>`,
-    attachments: [
-      {
-        filename: resumeFile.originalname,
-        content: fs.createReadStream(resumeFile.path), // ✅ Stream avoids corruption
-        contentType: "application/pdf",
-      },
-    ],
+    attachments: [attachment],
   };
 
   try {
     await transporter.sendMail(mailOptions);
 
-    // ✅ Save log to MongoDB
     const emailLog = new EmailLog({ to, subject, text });
     await emailLog.save();
 
