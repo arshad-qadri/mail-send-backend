@@ -44,8 +44,6 @@ exports.login = async (req, res) => {
         .status(401)
         .send({ success: false, message: "Email or password is wrong!" });
     }
-    console.log(user);
-
     const token = generateToken(
       { _id: user._id },
       process.env.JWT_SECRET,
