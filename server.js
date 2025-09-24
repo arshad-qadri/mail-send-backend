@@ -6,6 +6,7 @@ const emailRoutes = require("./routes/emailRoutes");
 // Load environment variables
 dotenv.config();
 const connectDB = require("./config/db");
+const userRoute = require("./routes/userRoutes");
 
 // Initialize Express app
 const app = express();
@@ -23,6 +24,7 @@ app.use(express.json());
 
 // Routes
 app.use("/api/email", emailRoutes);
+app.use("/api/user", userRoute);
 
 // Start server
 const PORT = process.env.PORT || 5000;
